@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cms.mapper.common.CommonMapper">
+
+	<select id="select"
+		parameterType="com.cms.entity.common.MCodeMstBean"
+		resultType="com.cms.entity.common.MCodeMstBean">
+		SELECT
+		codeKey
+		, codeName
+		, code
+		, value
+		FROM
+		m_codemst
+		<where>
+			<if test="codeKey != null">
+				codeKey = #{codeKey}
+			</if>
+		</where>
+		order by codeKey,code
+	</select>
+</mapper>

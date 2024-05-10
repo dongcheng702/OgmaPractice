@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cms.mapper.practice1.Practice1Mapper">
+	
+	<select id="select"
+		parameterType="com.cms.entity.employee.CmsEmployeeBean"
+		resultType="com.cms.entity.employee.CmsEmployeeBean">
+		SELECT
+		cms.employeeId,
+		cms.name,
+		mst.generalName as sexForList,
+		DATE_FORMAT(cms.birthday, '%Y-%m-%d') as birthday,
+		DATE_FORMAT(cms.joiningDate, '%Y-%m-%d') as joiningDate
+		FROM
+		cms_employee cms
+		left join cms_general_mst mst on cms.sex = mst.generalId
+		                             and mst.generalKey = 'SEXY' 
+		<where>
+			<if test="employeeId != null">
+				and employeeId = #{employeeId}
+			</if>
+			<if test="name != null">
+				and name like concat('%',#{name},'%')
+			</if>
+		</where>
+		order by cms.joiningDate asc, cms.birthday asc
+	</select>
+
+</mapper>

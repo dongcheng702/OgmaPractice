@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cms.mapper.practice3.Practice3Mapper">
+
+	<select id="selectEmployee"
+		parameterType="com.cms.entity.employee.CmsEmployeeBean"
+		resultType="com.cms.entity.employee.CmsEmployeeBean">
+		SELECT
+		*
+		FROM
+		cms_employee
+		<where>
+			<if test="employeeId != null">
+				employeeId = #{employeeId}
+			</if>
+		</where>
+	</select>
+
+	<select id="selectWorkHourList"
+		parameterType="com.cms.entity.cmsworkhour.CmsWorkHourBean"
+		resultType="com.cms.entity.cmsworkhour.CmsWorkHourBean">
+		SELECT
+		  employeeId,
+		  workDay,
+		  startTime,
+		  endTime,
+		  DATE_FORMAT(workDay, '%Y%m') as workMonth
+		FROM
+		cms_work_hour
+		<where>
+			<if test="employeeId != null">
+				employeeId = #{employeeId}
+			</if>
+			<if test="workMonth != null">
+				AND DATE_FORMAT(workDay, '%Y%m') = #{workMonth}
+			</if>
+		</where>
+		order by employeeId,workDay
+	</select>
+	
+	<insert id="insertRecords" parameterType="java.util.List">
+	    insert into cms_invoice
+	      (employeeId,
+		   workMonth,
+		   companyName,
+		   requestFirst,
+		   standardBusinessHours,
+		   realWorkHous,
+		   salary,
+		   disabledGeneration,
+		   registDay,
+		   updateDay
+		) values
+	    <foreach collection="inputList" item="rec" separator=","> 
+	    (
+	       #{rec.employeeId,jdbcType=VARCHAR},
+		   #{rec.workMonth,jdbcType=VARCHAR},
+		   #{rec.companyName,jdbcType=VARCHAR},
+		   #{rec.requestFirst,jdbcType=VARCHAR},
+		   #{rec.standardBusinessHours,jdbcType=INTEGER},
+		   #{rec.realWorkHous,jdbcType=INTEGER},
+		   #{rec.salary,jdbcType=DECIMAL},
+		   #{rec.disabledGeneration,jdbcType=DECIMAL},
+		   #{rec.registDay,jdbcType=TIMESTAMP},
+		   #{rec.updateDay,jdbcType=TIMESTAMP}
+	    )
+	    </foreach>
+	</insert>
+
+</mapper>

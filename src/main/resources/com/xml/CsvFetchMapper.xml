@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cms.mapper.csvfetch.CsvFetchMapper">
+
+	<!-- CSV登録 -->
+	<insert id="insertBulk" parameterType="java.util.List">
+	    insert into market_sales(			 
+		   salesId, 
+		   salesDay,
+		   storeId,
+		   goodId,
+		   salesCount,
+		   registDay,
+		   updateDay
+		) values
+	    <foreach collection="inputList" item="rec" separator=","> 
+	    (
+	       #{rec.salesId,jdbcType=VARCHAR},
+		   #{rec.salesDay,jdbcType=VARCHAR},
+		   #{rec.storeId,jdbcType=VARCHAR},
+		   #{rec.goodId,jdbcType=VARCHAR},
+		   #{rec.salesCount,jdbcType=INTEGER},
+		   #{rec.registDay,jdbcType=TIMESTAMP},
+		   #{rec.updateDay,jdbcType=TIMESTAMP}
+	    )
+	    </foreach>
+	</insert>
+</mapper>

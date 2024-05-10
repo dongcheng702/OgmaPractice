@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cms.mapper.cost.CmsCostMapper">
+
+    <select id="selectMaxId"
+        resultType="String">
+        SELECT
+            max(costId) as costId
+        FROM cms_cost
+    </select>
+    
+    
+    <select id="select" parameterType="com.cms.entity.cost.CmsCostBean"
+        resultType="com.cms.entity.cost.CmsCostBean">
+        SELECT
+        cos.costId,
+        cos.costDay,
+        cos.costNote,
+        cos.costType,
+        mst1.generalName as costTypeName,
+        cos.costAmount,
+        cos.hasTax,
+        mst2.generalName as hasTaxName,
+        cos.taxNote,
+        cos.employeeId,
+        emp.name as employeeNm,
+        cos.registDay,
+        cos.updateDay
+        FROM
+        cms_cost cos left join cms_employee emp     on cos.employeeId = emp.employeeId
+                     left join cms_general_mst mst1 on cos.costType = mst1.generalId
+                                                   and mst1.generalKey = 'COST_TYPE'
+                     left join cms_general_mst mst2 on cos.hasTax = mst2.generalId
+                                                   and mst2.generalKey = 'TAX_FLG'
+        <where>
+            <if test="costId != null">
+                cos.costId = #{costId}
+            </if>
+            <if test="costDay != null">
+                cos.costDay = #{costDay}
+            </if>
+            <if test="employeeId != null">
+                cos.employeeId = #{employeeId}
+            </if>
+            <if test="employeeNm != null">
+                emp.name like concat('%',#{employeeNm},'%')
+            </if>
+            <if test="costMonth != null">
+               and Date_Format(cos.costDay, '%Y-%m')  like concat('%',#{costMonth},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectList"
+        parameterType="com.cms.entity.cost.CmsCostBean"
+        resultType="com.cms.entity.cost.CmsCostBean">
+        SELECT
+        costId,
+        costDay,
+        costNote,
+        costType,
+        costAmount,
+        hasTax,
+        taxNote,
+        employeeId,
+        registDay,
+        updateDay
+
+        FROM
+        cms_cost
+        <where>
+            <if test="costId != null">
+                costId = #{costId}
+            </if>
+            <if test="costDay != null">
+                costDay = #{costDay}
+            </if>
+        </where>
+    </select>
+    <insert id="insert" parameterType="com.cms.entity.cost.CmsCostBean">
+        INSERT INTO cms_cost (
+        costId,
+        costDay,
+        costNote,
+        costType,
+        costAmount,
+        hasTax,
+        taxNote,
+        employeeId,
+        registDay,
+        updateDay
+        )
+        VALUES (
+        #{costId},
+        #{costDay},
+        #{costNote},
+        #{costType},
+        #{costAmount},
+        #{hasTax},
+        #{taxNote},
+        #{employeeId},
+        sysdate(),
+        sysdate()
+
+        )
+    </insert>
+
+    <update id="update" parameterType="com.cms.entity.cost.CmsCostBean">
+        update cms_cost
+        set costNote= #{costNote},
+        costDay = #{costDay},
+        costType= #{costType},
+        costAmount= #{costAmount},
+        hasTax= #{hasTax},
+        taxNote= #{taxNote},
+        employeeId= #{employeeId},
+        updateDay= sysdate()
+        where costId = #{costId}
+    </update>
+
+    <delete id="delete" parameterType="com.cms.entity.cost.CmsCostBean">
+        delete from cms_cost
+        where costId = #{costId}
+    </delete>
+    
+    
+    <delete id="deleteAll">        
+        delete from cms_cost where costId in
+        <foreach collection="array" open="(" close=")" item="item" separator="," >
+            #{item}
+        </foreach>
+    </delete>
+</mapper>

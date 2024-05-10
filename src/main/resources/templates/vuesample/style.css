@@ -1,0 +1,48 @@
+/* style.css */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
+
+#app {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.publicHeader {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+}
+
+.publicTime {
+    margin-top: 20px;
+    font-size: 16px;
+}
+
+.providerDetail {
+    margin-top: 20px;
+}
+
+.div_edit_row {
+    margin-bottom: 10px;
+}
+
+.providerTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.providerTable th, .providerTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.providerTable th {
+    background-color: #f2f2f2;
+}

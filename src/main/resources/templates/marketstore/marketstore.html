@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="common/common_header.html"></div>
+
+<body>
+	<form th:action="@{/marketstore/marketstore}" method="POST"
+		th:object="${form}">
+		<div class="publicHeader" th:insert="~{fragments/header :: header}">...</div>
+		<!--时间-->
+		<section class="publicTime">
+			<span id="time">2015年1月1日 11:11 星期一</span> <a href="#">メッセージ</a>
+		</section>
+		<!--主体内容-->
+		<section class="publicMian">
+			<div class="left" th:insert="~{fragments/left :: left}">...</div>
+			<div class="right">
+				<div class="location">
+					<span><strong>販売店画面</strong> </span>
+					<span th:if="${form.errorMessage!=null}" th:text="${form.errorMessage}" style="color: red;"></span>
+				</div>
+				<div class="search row">
+				    <div class="class_td_50">
+				        <div style="display: inline-block;">
+				            <label>販売店ID：</label>
+				            <input name=storeId type="text" th:value="${form.storeId}" th:field="*{storeId}" />
+				        </div>
+				        <div style="display: inline-block; margin-left: 10px;">
+				            <label>店名：</label>
+				            <input name="storeName" type="text" th:value="${form.storeName}" th:field="*{storeName}" />
+				        </div>
+				        <div style="display: inline-block; margin-left: 10px;">
+				            <input type="submit" id="readStoreData" name="readStoreData" value="検索" style="margin-left: 5px; margin-top: 5px;" />
+				        </div>
+				    </div>
+				</div>
+				<div style="padding-top: 10px;">
+					<table class="providerTable" th:if="${form != null}">
+						<tr class="firstTr">
+							<th width="10%">販売店ID</th>
+							<th width="20%">店名</th>
+							<th width="20%">住所</th>
+							<th width="10%">電話</th>
+							<th width="10%">営業開始年月日</th>
+							<th width="10%">営業終了年月日</th>
+						</tr>
+						<tr th:if="${!#lists.isEmpty(form.results)}"
+							th:each="data,stat : ${form.results}">
+							<td width="10%" th:text="${data.storeId}"></td>
+							<td width="20%" th:text="${data.storeName}"></td>
+							<td width="20%" th:text="${data.address}"></td>
+							<td width="10%" th:text="${data.phone}"></td>
+							<td width="10%" th:text="${data.startDay}"></td>
+							<td width="10%" th:text="${data.finishDay}"></td>
+						</tr>
+					</table>
+				</div>
+			</div>>	
+		</section>
+			<footer class="footer"> </footer>
+	</form>
+		
+	<!-- 共通Js -->
+	<script type="text/javascript" th:src="@{/js/jquery.js}"></script>
+	<script type="text/javascript" th:src="@{/js/js.js}"></script>
+	<script type="text/javascript" th:src="@{/js/time.js}"></script>
+	<script type="text/javascript" th:src="@{/js/common.js}"></script>
+</body>
+</html>

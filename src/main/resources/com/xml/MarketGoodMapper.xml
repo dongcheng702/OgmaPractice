@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cms.mapper.marketgood.MarketGoodMapper">
+
+	<insert id="insert"
+		parameterType="com.cms.entity.marketgood.MarketGoodBean">
+		INSERT INTO market_goods (
+		goodId,
+		goodName,
+		type,
+		maker,
+		purchasePrice,
+		salesPrice,
+		registDay,
+		updateDay
+		)
+		VALUES (
+		#{goodId},
+		#{goodName},
+		#{type},
+		#{maker},
+		#{purchasePrice},
+		#{salesPrice},
+		sysdate(),
+		sysdate()
+		)
+	</insert>
+
+</mapper>

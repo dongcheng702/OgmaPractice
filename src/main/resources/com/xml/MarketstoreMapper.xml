@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cms.mapper.marketstore.MarketstoreMapper">
+	
+	<select id="select"
+		parameterType="com.cms.entity.marketstore.MarketstoreBean"
+		resultType="com.cms.entity.marketstore.MarketstoreBean">
+        SELECT 
+            ms.storeId,
+            ms.storeName,
+            ms.address,
+            ms.phone,
+            ms.startDay,
+            ms.finishDay
+        FROM 
+            market_store AS ms
+        WHERE 
+            1=1
+            <if test="storeId != null and storeId != ''">
+                AND ms.storeId = #{storeId}
+            </if>
+            <if test="storeName != null and storeName != ''">
+                AND ms.storeName LIKE CONCAT('%', #{storeName}, '%')
+            </if>
+            
+            <!-- 处理空或null值的情况 -->
+            <if test="storeId == null or storeId == ''">
+                AND ms.storeId IS NOT NULL AND ms.storeId != ''
+            </if>
+            <if test="storeName == null or storeName == ''">
+                AND ms.storeName IS NOT NULL AND ms.storeName != ''
+            </if>
+        
+        ORDER BY 
+            ms.startDay ASC,
+            ms.storeName DESC
+	</select>
+
+</mapper>

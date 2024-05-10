@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="common/common_header.html"></div>
+
+<body>
+	<form th:action="@{/popup/popup}" method="POST"
+		th:object="${form}">
+	<div class="publicHeader" th:insert="~{fragments/header :: header}">...</div>
+	<section class="publicTime">
+			<span id="time">2015年1月1日 11:11 星期一</span> <a href="#">メッセージ</a>
+		</section>
+		<!--主体内容-->
+		<section class="publicMian">
+			<div class="left" th:insert="~{fragments/left :: left}">...</div>
+			<div class="right">
+				<div class="location">
+					<strong>画面情報：</strong> <span>給料明細PDF生成</span> <br />
+					<span th:if="${form.errorMessage}"  th:text="${form.errorMessage}" style="color: red;">Error</span>
+				</div>
+				<div class="location">
+					<div class="right">
+						<!-- ----------PopUp画面 start---------- -->
+						<div class="search row">
+							<div class="class_td_50">
+								<label>社員ID: </label>
+								<input id="employeeId" type="text" name="employeeId" th:value="${form.employeeId}" th:field="*{employeeId}"placeholder="社員ID"/>
+								<label>給料年月: </label>
+								<input id="salaryMonth" type="text" name="salaryMonth" th:value="${form.month}" th:field="*{month}" placeholder="給料年月"/>
+								<button type="button" class="btn btn-primary" data-toggle="modal" 
+									data-target="#exampleModal" style="padding:0;background-color:white;border-color:white;" id="openSelectEmployeeScreen">
+									🔎
+								</button>
+							</div>
+						<!-- ----------PopUp画面 end  ---------- -->
+						</div>
+						<div class="providerDetailBtn"
+							style="margin-left: 45px; margin-top: 0px;">
+							<input type="submit" id="createpdf" name="createpdf"
+							value="打印" style="margin-left: 5px; margin-top: 5px;" />
+							<!-- 添加文件下载链接 -->
+							<button onclick="downloadPdf()">下载 PDF 文件</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</form>
+		<!-- ----------PopUp画面 start---------- -->
+	<div th:replace="popup/popupmodal.html"></div>
+	<script type="text/javascript" th:src="@{/js/popup/selectsalary.js}"></script>
+	<script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+	<!-- ----------PopUp画面 end  ---------- -->
+	
+	<script type="text/javascript" th:src="@{/js/popup/downloadPdf.js}"></script>
+	
+	<!-- 共通Js -->
+	<script type="text/javascript" th:src="@{/js/jquery.js}"></script>
+	<script type="text/javascript" th:src="@{/js/js.js}"></script>
+	<script type="text/javascript" th:src="@{/js/time.js}"></script>
+	<script type="text/javascript" th:src="@{/js/common.js}"></script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="common/common_header.html"></div>
+
+<body>
+	<form th:action="@{/csvfetch/csvfetch}" method="POST"
+		th:object="${form}" enctype="multipart/form-data">
+		<div class="publicHeader" th:insert="~{fragments/header :: header}">...</div>
+		<!--时间-->
+		<section class="publicTime">
+			<span id="time">2015年1月1日 11:11 星期一</span> <a href="#">メッセージ</a>
+		</section>
+		<!--主体内容-->
+		<section class="publicMian">
+			<div class="left" th:insert="~{fragments/left :: left}">...</div>
+			<div class="right">
+				<div class="location">
+					<span><strong>CSV取込画面</strong> </span>
+				</div>
+				<div class="providerDetail">
+					<div class="div_edit_row" style="margin-left: 10px;">
+						    <!-- エラーメッセージの一覧表示 -->
+						    <span th:if="${form.errorMessage}"  th:text="${form.errorMessage}" style="color: red;">Error</span>
+				    </div>
+					    
+					<div class="div_edit_row" style="margin-left: 10px; margin-top: 10px;">
+					        <label>Csvファイル：</label> 
+					        <!-- 文件选择器按钮 -->
+					        <input type="file" id="fileInput" name="fileInput" accept=".csv" >
+				    </div>
+				    
+					<div class="div_edit_row" style="margin-left: 10px;">
+							<label>CSV項目数：</label>
+	                        <input name="itemCount" type="number" th:value="${form.itemCount}" th:field="*{itemCount}" />
+						</div>
+						
+				    <div class="providerDetailBtn" style="margin-left: 45px; margin-top: 0px;">
+				        <input type="submit" id="upcsvdata" name="upcsvdata" value="CSV取込" style="margin-left: 5px; margin-top: 5px;" />
+				    </div>
+			    </div>
+			</div>
+		</section>
+			<footer class="footer"> </footer>
+	</form>
+		
+	<!-- 共通Js -->
+	<script type="text/javascript" th:src="@{/js/jquery.js}"></script>
+	<script type="text/javascript" th:src="@{/js/js.js}"></script>
+	<script type="text/javascript" th:src="@{/js/time.js}"></script>
+	<script type="text/javascript" th:src="@{/js/common.js}"></script>
+</body>
+</html>

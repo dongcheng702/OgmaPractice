@@ -1,0 +1,7 @@
+employeeid,name,sex,birthday,address,phone,joiningDate,mail,jobType,jobLevel,employeeKbn,salary,topWorkHour,downWorkHour,loginId,password,registDay,updateDay,delFlg
+1,王一,1,2002-01-01,神奈川県,0451000001,2010-04-01,wang1@gmail.com,1,1,社員,90000,9,9,test1@gmail.com,test,2022-04-01,2022-04-01,1
+2,王二,1,2001-02-22,神奈川県,0451000002,2009-04-01,wang2@gmail.com,1,1,社員,260000,26,26,test2@gmail.com,test,2022-04-01,2022-04-01,1
+3,李三,1,2003-03-12,東京都,0451000003,2011-02-14,wang3@gmail.com,1,1,社員,260000,26,26,test3@gmail.com,test,2022-04-01,2022-04-01,1
+4,李四,1,2004-04-11,埼玉県,0451000004,2011-02-14,wang4@gmail.com,1,1,社員,260000,26,26,test4@gmail.com,test,2022-04-01,2022-04-01,1
+5,柳五,1,2005-05-09,千葉県,0451000005,2014-04-01,wang5@gmail.com,1,1,社員,260000,26,26,test5@gmail.com,test,2022-04-01,2022-04-01,1
+6,柳六,0,2006-06-07,北海道,0451000006,2015-04-01,wang6@gmail.com,1,1,社員,260000,26,26,test6@gmail.com,test,2022-04-01,2022-04-01,1

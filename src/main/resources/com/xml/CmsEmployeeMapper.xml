@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cms.mapper.employee.CmsEmployeeMapper">
+	<select id="selectMaxId" resultType="String">
+        SELECT
+        max(employeeId) as employeeId
+        FROM cms_employee
+	</select>
+
+	<select id="selectRecordCount"
+        parameterType="com.cms.entity.employee.CmsEmployeeBean"
+        resultType="Integer">
+        SELECT
+        count(employeeId) as recCount
+        FROM cms_employee
+        where 1 = 1
+        <if test="employeeId != null">
+        	and employeeId = #{employeeId}
+        </if>
+        <if test="name != null">
+        	and name like concat('%',#{name},'%')
+        </if>
+        <if test="updateDay != null">
+        	and DATE_FORMAT(updateDay, '%Y-%m-%d %H:%i:%s') = #{updateDay}
+        </if>
+	</select>
+
+	<select id="select"
+        parameterType="com.cms.entity.employee.CmsEmployeeBean"
+        resultType="com.cms.entity.employee.CmsEmployeeBean">
+        SELECT
+        cms.employeeId as employeeId,
+        cms.name,
+        cms.sex,
+        mst2.generalName as sexForList,
+        DATE_FORMAT(cms.birthday, '%Y-%m-%d') as birthday,
+        DATE_FORMAT(cms.joiningDate, '%Y-%m-%d') as joiningDate,
+        cms.address,
+        cms.phone,
+        cms.mail,
+        cms.jobType,
+        cms.jobLevel,
+        cms.salary,
+        cms.employeeType,
+        cms.hasTax,
+        cms.topWorkHour,
+        cms.downWorkHour,
+        cms.loginId,
+        cms.password,
+        cms.employeeKbn,
+        mst1.generalName as employeeKbnForList,
+        DATE_FORMAT(cms.registDay, '%Y-%m-%d %H:%i:%s') as registDay,
+        DATE_FORMAT(cms.updateDay, '%Y-%m-%d %H:%i:%s') as updateDay
+        FROM
+        cms_employee cms
+        left join cms_general_mst mst1 on cms.employeeKbn = mst1.generalId
+                                     and mst1.generalKey = 'EMPLOYEE_TYPE'
+        left join cms_general_mst mst2 on cms.sex = mst2.generalId
+                                     and mst2.generalKey = 'SEXY'
+        <where>
+        <if test="employeeId != null">
+        	and employeeId = #{employeeId}
+        </if>
+        <if test="name != null">
+        	and name like concat('%',#{name},'%')
+        </if>
+        <if test="employeeKbn != null">
+        	and employeeKbn = #{employeeKbn}
+        </if>
+        <if test="sex != null">
+        	and sex = #{sex}
+        </if>
+        <if test="birthday != null">
+        <![CDATA[
+        	and birthday >= date_add(DATE_FORMAT(#{birthday}, '%Y-%m-%d'),interval -day(DATE_FORMAT(#{birthday}, '%Y-%m-%d'))+1 day)
+        	and birthday < last_day(DATE_FORMAT(#{birthday}, '%Y-%m-%d'))
+        	]]>
+        </if>
+        <if test="loginId != null">
+        	and loginId = #{loginId}
+        </if>
+        </where>
+	</select>
+
+	<select id="selectList"
+        parameterType="com.cms.entity.employee.CmsEmployeeBean"
+        resultType="com.cms.entity.employee.CmsEmployeeBean">
+        SELECT
+        *
+        FROM
+        cms_employee
+        <where>
+        	<if test="employeeId != null">
+                employeeId = #{employeeId}
+        	</if>
+        	<if test="name != null">
+                name = #{name}
+        	</if>
+        </where>
+	</select>
+	<insert id="insert"
+        parameterType="com.cms.entity.employee.CmsEmployeeBean">
+        INSERT INTO cms_employee (
+        employeeId,
+        name,
+        sex,
+        birthday,
+        address,
+        phone,
+        joiningDate,
+        mail,
+        jobType,
+        jobLevel,
+        employeeKbn,
+        salary,
+        employeeType,
+        hasTax,
+        topWorkHour,
+        downWorkHour,
+        loginId,
+        password,
+        registDay,
+        updateDay
+        )
+        VALUES (
+        #{employeeId},
+        #{name},
+        #{sex},
+        STR_TO_DATE(#{birthday}, '%Y-%m-%d'),
+        #{address},
+        #{phone},
+        STR_TO_DATE(#{joiningDate}, '%Y-%m-%d'),
+        #{mail},
+        #{jobType},
+        #{jobLevel},
+        #{employeeKbn},
+        #{salary},
+        #{employeeType},
+        #{hasTax},
+        #{topWorkHour},
+        #{downWorkHour},
+        #{loginId},
+        #{password},
+        sysdate(),
+        sysdate()
+        )
+	</insert>
+
+	<update id="update"
+        parameterType="com.cms.entity.employee.CmsEmployeeBean">
+        update cms_employee
+        set name = #{name},
+        sex = #{sex},
+        birthday = STR_TO_DATE(#{birthday}, '%Y-%m-%d'),
+        address = #{address},
+        phone = #{phone},
+        joiningDate = STR_TO_DATE(#{joiningDate}, '%Y-%m-%d'),
+        mail = #{mail},
+        jobType = #{jobType},
+        jobLevel = #{jobLevel},
+        employeeKbn = #{employeeKbn},
+        salary = #{salary},
+        employeeType = #{employeeType},
+        hasTax = #{hasTax},
+        topWorkHour = #{topWorkHour},
+        downWorkHour = #{downWorkHour},
+        loginId = #{loginId},
+        password = #{password},
+        updateDay =sysdate()
+        where employeeId = #{employeeId}
+	</update>
+
+	<delete id="delete"
+        parameterType="com.cms.entity.employee.CmsEmployeeBean">
+        delete from cms_employee
+        where employeeId = #{employeeId}
+	</delete>
+
+	<delete id="deleteAll">
+        delete from cms_employee where employeeId in
+        <foreach collection="array" open="(" close=")" item="item"
+        	separator=",">
+        	#{item}
+        </foreach>
+	</delete>
+</mapper>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="common/common_header.html"></div>
+
+<body>
+	<form th:action="@{/benefitcalculation/benefitcalculation}" method="POST"
+		th:object="${form}">
+		<div class="publicHeader" th:insert="~{fragments/header :: header}">...</div>
+		<!--时间-->
+		<section class="publicTime">
+			<span id="time">2015年1月1日 11:11 星期一</span> <a href="#">メッセージ</a>
+		</section>
+		<!--主体内容-->
+		<section class="publicMian">
+			<div class="left" th:insert="~{fragments/left :: left}">...</div>
+			<div class="right">
+				<div class="location">
+					<span><strong>月次売上画面</strong> </span>
+				</div>
+				<div class="providerDetail">
+					<div class="div_edit_row" style="margin-left: 20px;">
+					    <!-- エラーメッセージの一覧表示 -->
+					    <span th:if="${form.errorMessage}"  th:text="${form.errorMessage}" style="color: red;">Error</span>
+				    </div>
+				    
+					<div class="div_edit_row">
+							<label>販売店ID：</label> <input name=storeId type="text"
+								th:value="${form.storeId}" th:field="*{storeId}" />
+							<span th:if="${#fields.hasErrors('storeId')}" 
+							th:errors="*{storeId}" style="color: red"></span>
+					</div>
+					
+					<div class="div_edit_row">
+						<label>年月：</label> <input name="registDay" type="month"
+							th:value="${form.salesDay}" th:field="*{salesDay}" />
+							<span th:if="${#fields.hasErrors('salesDay')}" 
+							th:errors="*{salesDay}" style="color: red"></span>
+					</div>
+					
+					<div class="providerDetailBtn"
+						style="margin-left: 45px; margin-top: 0px;">
+						<input type="submit" id="calculate" name="calculate"
+							value="计算" style="margin-left: 5px; margin-top: 5px;" />
+					</div>
+					<div style="padding-top: 10px;">
+						<table class="providerTable" th:if="${form != null}">
+							<tr class="firstTr">
+							    <th width="11%">販売店名</th>
+							    <th width="11%">販売店ID</th>
+							    <th width="11%">販売店住所</th>
+							    <th width="11%">販売店電話</th>
+							    <th width="11%">営業開始年月日</th>
+							    <th width="11%">営業終了年月日</th>
+							    <th width="11%">購入件数合計</th>
+							    <th width="11%">利益</th>
+							    <th width="11%">購入金額合計</th>
+							</tr>
+							<tr th:if="${!#lists.isEmpty(form.results)}"
+							th:each="data,stat : ${form.results}">
+							    <td th:text="${data.storeName}"></td>
+							    <td th:text="${data.storeId}"></td>
+							    <td th:text="${data.address}"></td>
+							    <td th:text="${data.phone}"></td>
+							    <td th:text="${data.startDay}"></td>
+							    <td th:text="${data.finishDay}"></td>
+							    <td th:text="${data.salesCount}"></td>
+							    <td th:text="${data.benefit}"></td>
+							    <td th:text="${data.salesAmount}"></td>
+							</tr>
+						</table>
+					</div>
+			    </div>
+			</div>
+		</section>
+			<footer class="footer"> </footer>
+	</form>
+		
+	<!-- 共通Js -->
+	<script type="text/javascript" th:src="@{/js/jquery.js}"></script>
+	<script type="text/javascript" th:src="@{/js/js.js}"></script>
+	<script type="text/javascript" th:src="@{/js/time.js}"></script>
+	<script type="text/javascript" th:src="@{/js/common.js}"></script>
+</body>
+</html>

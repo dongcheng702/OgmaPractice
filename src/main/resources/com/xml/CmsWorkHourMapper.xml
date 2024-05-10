@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cms.mapper.workhour.CmsWorkHourMapper">
+
+	<select id="select"
+		parameterType="com.cms.entity.cmsworkhour.CmsWorkHourBean"
+		resultType="com.cms.entity.cmsworkhour.CmsWorkHourBean">
+		SELECT
+		employeeId,
+		workDay,
+		startTime,
+		endTime,
+		workHous,
+		registDay,
+		updateDay
+		FROM
+		cms_work_hour
+		<where>
+			<if test="employeeId != null">
+				employeeId = #{employeeId}
+			</if>
+			<if test="workDay != null">
+				workDay = #{workDay}
+			</if>
+		</where>
+	</select>
+
+	<select id="selectList"
+		parameterType="com.cms.entity.cmsworkhour.CmsWorkHourBean"
+		resultType="com.cms.entity.cmsworkhour.CmsWorkHourBean">
+		SELECT
+		employeeId,
+		workDay,
+		startTime,
+		endTime,
+		workHous,
+		registDay,
+		updateDay
+		FROM
+		cms_work_hour
+		<where>
+			<if test="employeeId != null">
+				employeeId = #{employeeId}
+			</if>
+			<if test="workDay != null">
+				workDay = #{workDay}
+			</if>
+		</where>
+	</select>
+	<insert id="insert"
+		parameterType="com.cms.entity.cmsworkhour.CmsWorkHourBean">
+		INSERT INTO cms_work_hour (
+		employeeId,
+		workDay,
+		startTime,
+		endTime,
+		workHous,
+		registDay,
+		updateDay)
+		VALUES (
+		#{employeeId},
+		#{workDay},
+		#{startTime},
+		#{endTime},
+		#{workHous},
+		#{registDay},
+		#{updateDay}
+		)
+	</insert>
+
+	<update id="update"
+		parameterType="com.cms.entity.cmsworkhour.CmsWorkHourBean">
+		update cms_work_hour
+		set workDay = #{workDay},
+		startTime = #{startTime},
+		endTime = #{endTime},
+		workHous = #{workHous},
+		registDay = #{registDay},
+		updateDay = #{updateDay})
+		where employeeId = #{employeeId}
+	</update>
+
+	<delete id="delete"
+		parameterType="com.cms.entity.cmsworkhour.CmsWorkHourBean">
+		delete from cms_work_hour
+		where employeeId = #{employeeId}
+	</delete>
+	
+	<!-- CSV登録 -->
+	<insert id="insertBulk" parameterType="java.util.List">
+	    insert into cms_work_hour(			 
+		   employeeId, 
+		   workDay,
+		   startTime,
+		   endTime,
+		   workHous,
+		   registDay,
+		   updateDay
+		) values
+	    <foreach collection="inputList" item="rec" separator=","> 
+	    (
+	       #{rec.employeeId,jdbcType=VARCHAR},
+		   #{rec.workDay,jdbcType=VARCHAR},
+		   #{rec.startTime,jdbcType=TIMESTAMP},
+		   #{rec.endTime,jdbcType=TIMESTAMP},
+		   #{rec.workHous,jdbcType=INTEGER},
+		   #{rec.registDay,jdbcType=TIMESTAMP},
+		   #{rec.updateDay,jdbcType=TIMESTAMP}
+	    )
+	    </foreach>
+	</insert>
+</mapper>

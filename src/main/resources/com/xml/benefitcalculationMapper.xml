@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cms.mapper.benefitcalculation.BenefitcalculationMapper">
+
+	<select id="select" parameterType="com.cms.entity.benefitcalculation.BenefitcalculationBean"
+	        resultType="com.cms.entity.benefitcalculation.BenefitcalculationBean">
+		SELECT 
+		    *
+		FROM 
+		    market_store Tb 
+		INNER JOIN 
+		    market_sales ms ON Tb.storeId = ms.storeId
+		INNER JOIN 
+		    market_goods mg ON ms.goodId = mg.goodId
+		<where>
+		    <if test="storeId != null and storeId != ''">
+		        and Tb.storeId = #{storeId}
+		    </if>
+
+		    <if test="salesDay != null and salesDay != ''">
+		        and ms.salesDay BETWEEN CONCAT(#{salesDay}, '-01') AND LAST_DAY(CONCAT(#{salesDay}, '-01'))
+		    </if>
+		</where>
+		ORDER BY
+		    Tb.storeId ASC,
+		    ms.salesDay ASC,
+		    mg.goodName ASC
+
+	</select>
+
+	<select id="selectID" parameterType="com.cms.entity.benefitcalculation.BenefitcalculationBean"
+	        resultType="Integer">
+	    SELECT 
+			count(ms.storeId) 
+	    FROM 
+	    	market_store as ms
+	    <where>
+	        <if test="storeId != null and !storeId.isEmpty()">
+	            and ms.storeId = #{storeId}
+	        </if>
+	    </where>
+	</select>
+	
+	<select id="countBenefit" resultType="int">
+	    SELECT count(1) FROM market_benefit;
+	</select>
+	
+	<select id="selectBenefit" parameterType="com.cms.entity.benefitcalculation.BenefitcalculationBean"
+	        resultType="com.cms.entity.benefitcalculation.BenefitcalculationBean">
+	    SELECT 
+	        ms.storeName,
+	        ms.storeId,
+	        ms.address,
+	        ms.phone,
+	        ms.startDay,
+	        ms.finishDay,
+	        mb.salesCount,
+	        mb.benefit,
+	        mb.salesAmount,
+	        mb.salesMonth
+	    FROM 
+	        market_benefit mb 
+	    INNER JOIN 
+	        market_store ms 
+	    ON 
+	        mb.storeId = ms.storeId
+	    <where>
+	        <if test="storeId != null and storeId != ''">
+	            AND ms.storeId = #{storeId}
+	        </if>
+	        <if test="salesDay != null and salesDay != ''">
+		        and mb.salesMonth = #{salesDay}
+		    </if>
+	    </where>
+	</select>
+
+
+	<insert id="insertBenfit" parameterType="com.cms.entity.benefitcalculation.BenefitcalculationBean">
+	    insert into market_benefit(		
+	       benefitId,	 
+	       storeId, 
+	       salesMonth,
+	       salesCount,
+	       salesAmount,
+	       purchaseAmount,
+	       benefit,
+	       registDay,
+	       updateDay,
+	       storeName,
+	       address,
+	       phone
+	    ) values (
+	       #{benefitId},
+	       #{storeId},
+	       LEFT(#{salesDay}, 7),
+	       #{salesCount},
+	       #{salesAmount},
+	       #{purchaseAmount},
+	       #{benefit},
+	       NOW(),
+	       NOW(),
+	       #{storeName},
+	       #{address},
+	       #{phone}
+	    )
+	</insert>
+
+	<update id="updateBenefit" parameterType="com.cms.entity.benefitcalculation.BenefitcalculationBean">
+    update market_benefit
+    set
+        storeId = #{storeId},
+        salesMonth = LEFT(#{salesDay}, 7),
+        salesCount = #{salesCount},
+        salesAmount = #{salesAmount},
+        purchaseAmount = #{purchaseAmount},
+        benefit = #{benefit},
+        updateDay = NOW(),
+        storeName = #{storeName},
+        address = #{address},
+        phone = #{phone}
+    where storeId = #{storeId} and salesMonth = LEFT(#{salesDay}, 7)
+	</update>
+</mapper>

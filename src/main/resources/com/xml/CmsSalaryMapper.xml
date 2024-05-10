@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cms.mapper.salary.CmsSalaryMapper">
+	<select id="select"
+		parameterType="com.cms.entity.salary.CmsSalaryDetailBean"
+		resultType="com.cms.entity.salary.CmsSalaryDetailBean">
+		SELECT
+			det.employeeId,
+			emp.name as employeeNm,
+			det.salaryMonth,
+			det.salary,
+			det.workhours,
+			det.disabledGeneration,
+			det.cost,
+			det.actualSalary,
+			det.registDay,
+			det.updateDay
+		FROM
+		cms_salary_detail det	
+		left join cms_employee emp on det.employeeId = emp.employeeId
+		where 1=1
+		<if test="employeeId != null">
+			and det.employeeId = #{employeeId}
+		</if>
+		<if test="employeeNm != null">
+		    and emp.name like concat('%',#{employeeNm},'%')
+		</if>
+		<if test="salaryMonth != null">
+              and det.salaryMonth  = #{salaryMonth}
+		</if>
+	</select>
+
+	<insert id="insert"
+		parameterType="com.cms.entity.salary.CmsSalaryDetailBean">
+		INSERT INTO cms_salary_detail (
+		employeeId,
+		salaryMonth,
+		salary,
+		workhours,
+		disabledGeneration,
+		cost,
+		actualSalary,
+		registDay,
+		updateDay
+		)
+		VALUES (
+		#{employeeId},
+		#{salaryMonth},
+		#{salary},
+		#{workhours},
+		#{disabledGeneration},
+		#{cost},
+		#{actualSalary},
+		#{registDay},
+		#{updateDay}
+		)
+	</insert>
+
+	<delete id="delete"
+		parameterType="com.cms.entity.salary.CmsSalaryDetailBean">
+		delete from cms_salary_detail
+		where employeeId = #{employeeId}
+		and salaryMonth = #{salaryMonth}
+	</delete>
+	
+	<!-- CSV登録 -->
+	<insert id="insertBulk" parameterType="java.util.List">
+	    insert into cms_salary_detail(			 
+			employeeId,
+			salaryMonth,
+			salary,
+			workhours,
+			disabledGeneration,
+			cost,
+			actualSalary,
+			registDay,
+			updateDay
+		) values
+	    <foreach collection="inputList" item="rec" separator=","> 
+	    (
+			#{rec.employeeId,jdbcType=VARCHAR},
+			#{rec.salaryMonth,jdbcType=VARCHAR},
+			#{rec.salary,jdbcType=INTEGER},
+			#{rec.workhours,jdbcType=INTEGER},
+			#{rec.disabledGeneration,jdbcType=INTEGER},
+			#{rec.cost,jdbcType=INTEGER},
+			#{rec.actualSalary,jdbcType=INTEGER},
+			#{rec.registDay,jdbcType=TIMESTAMP},
+			#{rec.updateDay,jdbcType=TIMESTAMP}
+	    )
+	    </foreach>
+	</insert>
+
+	<delete id="deleteRecords">        
+        delete from cms_salary_detail where CONCAT(employeeId,"_",salaryMonth) in 
+        <foreach collection="ids" open="(" close=")" item="item" separator="," >
+            #{item}
+        </foreach>
+    </delete>
+    
+	<!-- ▼▼▼▼▼複数テーブルの検索▼▼▼▼▼ -->
+	<select id="selectEmployeeForSalaryIsNotCreated"
+		parameterType="com.cms.entity.salary.CmsSalaryDetailBean"
+		resultType="com.cms.entity.salary.CmsSalaryDetailRegistBean">
+		SELECT 
+			employee.employeeId as employeeId,
+			employee.name as name,
+			IF(employee.hasTax='0', employee.salary*1.1, employee.salary) as salary,
+			employee.topWorkHour as topWorkHour,
+			employee.downWorkHour as downWorkHour,
+			#{salaryMonth} as month,
+			workhour.hours as hours,
+			cost.costAmount as costAmount
+			FROM 
+			   (SELECT
+					employeeId,
+					name,
+					salary,
+					hasTax,
+					topWorkHour,
+					downWorkHour
+				FROM cms_employee 
+				WHERE employeeId not in (SELECT employeeId 
+										 FROM cms_salary_detail
+										 WHERE salaryMonth =#{salaryMonth})) employee 
+				LEFT JOIN 
+				(SELECT employeeId,
+						Date_Format(workDay, '%Y%m') as month,
+						SUM(timestampdiff(hour,startTime,endTime)) as hours 
+				 FROM cms_work_hour
+				 WHERE Date_Format(workDay, '%Y%m')=#{salaryMonth}
+				 GROUP BY employeeId,Date_Format(workDay, '%Y%m')
+			     ) workhour ON employee.employeeId = workhour.employeeId
+			     LEFT JOIN 
+			    (SELECT employeeId,
+						Date_Format(costDay, '%Y%m') as month,
+						SUM(IF(hasTax='0', costAmount, costAmount*1.1)) as costAmount
+				 FROM cms_cost
+				 WHERE 
+				 Date_Format(costDay, '%Y%m')=#{salaryMonth}
+				 GROUP BY employeeId, Date_Format(costDay, '%Y%m')
+			     ) cost ON employee.employeeId = cost.employeeId
+	</select>
+</mapper>

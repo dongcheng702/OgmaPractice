@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cms.mapper.employee.RestApiSampleMapper">
+	
+	<select id="select"
+        parameterType="com.cms.entity.employee.CmsEmployeeBean"
+        resultType="com.cms.entity.employee.CmsEmployeeBean">
+        SELECT
+        cms.employeeId as employeeId,
+        cms.name,
+        cms.sex,
+        mst2.generalName as sexForList,
+        DATE_FORMAT(cms.birthday, '%Y-%m-%d') as birthday,
+        DATE_FORMAT(cms.joiningDate, '%Y-%m-%d') as joiningDate,
+        cms.address,
+        cms.phone,
+        cms.mail,
+        cms.jobType,
+        cms.jobLevel,
+        cms.salary,
+        cms.employeeType,
+        cms.hasTax,
+        cms.topWorkHour,
+        cms.downWorkHour,
+        cms.loginId,
+        cms.password,
+        cms.employeeKbn,
+        mst1.generalName as employeeKbnForList,
+        DATE_FORMAT(cms.registDay, '%Y-%m-%d %H:%i:%s') as registDay,
+        DATE_FORMAT(cms.updateDay, '%Y-%m-%d %H:%i:%s') as updateDay
+        FROM
+        cms_employee cms
+        left join cms_general_mst mst1 on cms.employeeKbn = mst1.generalId
+                                     and mst1.generalKey = 'EMPLOYEE_TYPE'
+        left join cms_general_mst mst2 on cms.sex = mst2.generalId
+                                     and mst2.generalKey = 'SEXY'
+        <where>
+        <if test="employeeId != null">
+        	and employeeId = #{employeeId}
+        </if>
+        <if test="phone != null">
+        	and phone like concat('%',#{phone},'%')
+        </if>
+
+        </where>
+	</select>
+    <insert id="save"
+        parameterType="com.cms.entity.employee.CmsEmployeeBean">
+        INSERT INTO cms_employee (
+        employeeId,
+        name,
+        sex,
+        birthday,
+        address,
+        phone,
+        joiningDate,
+        mail,
+        jobType,
+        jobLevel,
+        employeeKbn,
+        salary,
+        employeeType,
+        hasTax,
+        topWorkHour,
+        downWorkHour,
+        loginId,
+        password,
+        registDay,
+        updateDay
+        )
+        VALUES (
+        #{employeeId},
+        #{name},
+        #{sex},
+        STR_TO_DATE(#{birthday}, '%Y-%m-%d'),
+        #{address},
+        #{phone},
+        STR_TO_DATE(#{joiningDate}, '%Y-%m-%d'),
+        #{mail},
+        #{jobType},
+        #{jobLevel},
+        #{employeeKbn},
+        #{salary},
+        #{employeeType},
+        #{hasTax},
+        #{topWorkHour},
+        #{downWorkHour},
+        #{loginId},
+        #{password},
+        sysdate(),
+        sysdate()
+        )
+    </insert>
+</mapper>

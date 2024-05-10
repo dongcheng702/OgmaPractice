@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cms.mapper.practice2.Practice2Mapper">
+
+	<!-- CSV登録 -->
+	<insert id="insertBulk" parameterType="java.util.List">
+	    insert into cms_work_hour(			 
+		   employeeId, 
+		   workDay,
+		   startTime,
+		   endTime,
+		   workHous,
+		   registDay,
+		   updateDay
+		) values
+	    <foreach collection="inputList" item="rec" separator=","> 
+	    (
+	       #{rec.employeeId,jdbcType=VARCHAR},
+		   #{rec.workDay,jdbcType=VARCHAR},
+		   #{rec.startTime,jdbcType=TIMESTAMP},
+		   #{rec.endTime,jdbcType=TIMESTAMP},
+		   #{rec.workHous,jdbcType=INTEGER},
+		   #{rec.registDay,jdbcType=TIMESTAMP},
+		   #{rec.updateDay,jdbcType=TIMESTAMP}
+	    )
+	    </foreach>
+	</insert>
+</mapper>

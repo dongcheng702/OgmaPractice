@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>社内システム</title>
+    <link href="style.css" rel="stylesheet">
+    <!-- Include Vue.js -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16"></script>
+    <!-- Include Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+</head>
+<style>
+
+</style>
+
+<body>
+    <div id="app">
+        <!-- 公共头部 -->
+        <div class="publicHeader">
+            <!-- 在这里添加你的公共头部内容 -->
+        </div>
+
+        <!-- 时间 -->
+        <section class="publicTime">
+            <span id="time">{{ currentTime }}</span> <a href="#">メッセージ</a>
+        </section>
+
+        <!-- 主体内容 -->
+        <section class="publicMain">
+            <div class="location">
+                <span><strong>月次売上画面</strong></span>
+            </div>
+            <div class="providerDetail">
+                <div class="div_edit_row" style="margin-left: 20px;">
+                    <!-- 错误消息显示 -->
+                    <span v-if="errorMessage" style="color: red;">{{ errorMessage }}</span>
+                </div>
+
+                <div class="div_edit_row">
+                    <label>販売店ID：</label>
+                    <input v-model="form.storeId" type="text" />
+                    <!-- 显示表单验证错误 -->
+                    <span v-if="errors.storeId" style="color: red">{{ errors.storeId }}</span>
+                </div>
+
+                <div class="div_edit_row">
+                    <label>年月：</label>
+                    <input v-model="form.salesDay" type="month" />
+                    <!-- 显示表单验证错误 -->
+                    <span v-if="errors.salesDay" style="color: red">{{ errors.salesDay }}</span>
+                </div>
+
+                <div class="providerDetailBtn" style="margin-left: 45px; margin-top: 0px;">
+                    <!-- 使用Vue事件绑定触发计算 -->
+                    <button @click="calculate">计算</button>
+                </div>
+
+                <div style="padding-top: 10px;">
+                    <table class="providerTable" v-if="form.results && form.results.length > 0">
+                        <tr class="firstTr">
+                            <th width="11%">販売店名</th>
+                            <th width="11%">販売店ID</th>
+                            <th width="11%">販売店住所</th>
+                            <th width="11%">販売店電話</th>
+                            <th width="11%">営業開始年月日</th>
+                            <th width="11%">営業終了年月日</th>
+                            <th width="11%">購入件数合計</th>
+                            <th width="11%">利益</th>
+                            <th width="11%">購入金額合計</th>
+                        </tr>
+                        <tr v-for="(data, index) in form.results" :key="index">
+                            <td>{{ data.storeName }}</td>
+                            <td>{{ data.storeId }}</td>
+                            <td>{{ data.address }}</td>
+                            <td>{{ data.phone }}</td>
+                            <td>{{ data.startDay }}</td>
+                            <td>{{ data.finishDay }}</td>
+                            <td>{{ data.salesCount }}</td>
+                            <td>{{ data.benefit }}</td>
+                            <td>{{ data.salesAmount }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer"> </footer>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                form: {
+                    storeId: '',
+                    salesDay: '',
+                    results: []
+                },
+                errorMessage: '',
+                errors: {},
+                currentTime: ''
+            },
+            mounted() {
+                // 在这里进行Vue实例初始化后的操作
+            },
+            methods: {
+                // 定义一个方法，使用Axios进行数据提交和处理
+                calculate() {
+                    axios.post('/OgmaPractice/vuesample/vueSample/calculate', this.form)
+                        .then(response => {
+                            // 处理成功响应
+                            this.form.results = response.data;
+                            console.log(response);
+                            this.errorMessage = '';
+                            this.errors = {};
+                        })
+                        .catch(error => {
+                            // 处理错误响应
+                            if (error.response.status === 400) {
+                                this.errors = error.response.data.errors;
+                                this.errorMessage = error.response.data.errorMessage;
+                            } else {
+                                console.error('Error:', error);
+                            }
+                        });
+                },
+            }
+        });
+    </script>
+</body>
+
+</html>
